@@ -55,10 +55,9 @@ const faqs = [
       "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
   },
   {
-    title: "This is a chapter title",
+    title: "This is a chapter title This is a chapter title This is a chapter title",
     text:
       "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
-    expanded: true,
   },
   {
     title: "This is a chapter title",

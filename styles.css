@@ -456,6 +456,7 @@ button {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: 16px;
   width: 100%;
   min-height: 56px;
   padding: 24px 0;
@@ -471,11 +472,15 @@ button {
 }
 
 .faq-row span {
+  flex: 1 1 auto;
+  max-width: min(302px, calc(100% - 44px));
   margin: 0;
   font-size: 16px;
   font-weight: 500;
   font-synthesis: none;
   line-height: 1.36;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .faq-panel {
