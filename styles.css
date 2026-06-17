@@ -443,6 +443,10 @@ button {
   border-bottom: 1px solid var(--line);
 }
 
+.faq-list.is-preview .faq-item:last-child {
+  border-bottom: 0;
+}
+
 .faq-item.is-revealing {
   animation: faq-reveal 360ms var(--ease) both;
   animation-delay: var(--faq-reveal-delay, 0ms);
@@ -504,11 +508,11 @@ button {
   gap: 8px;
   width: 100%;
   height: 48px;
-  margin-top: 20px;
+  margin-top: 0;
   border: 0;
   border-radius: 24px;
-  color: #ffffff;
-  background: var(--wine);
+  color: #240F1B;
+  background: #F9F7F5;
   font-size: 14px;
   font-weight: 500;
   font-synthesis: none;
@@ -531,8 +535,8 @@ button {
 .faq-load-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.38);
-  border-top-color: #ffffff;
+  border: 2px solid rgba(36, 15, 27, 0.16);
+  border-top-color: #240F1B;
   border-radius: 50%;
   animation: faq-spin 780ms linear infinite;
 }

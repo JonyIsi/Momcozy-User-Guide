@@ -568,8 +568,8 @@ function setFaqLoadMoreLoading(isLoading) {
   faqLoadMoreButton.disabled = isLoading;
   faqLoadMoreButton.setAttribute("aria-busy", isLoading ? "true" : "false");
   faqLoadMoreButton.innerHTML = isLoading
-    ? `<span class="faq-load-spinner" aria-hidden="true"></span><span>Loading</span>`
-    : `<span>查看更多</span>`;
+    ? `<span class="faq-load-spinner" aria-hidden="true"></span>`
+    : `<span>View More</span>`;
 }
 
 function ensureFaqLoadMoreButton() {
@@ -578,7 +578,7 @@ function ensureFaqLoadMoreButton() {
   faqLoadMoreButton = document.createElement("button");
   faqLoadMoreButton.className = "faq-load-more";
   faqLoadMoreButton.type = "button";
-  faqLoadMoreButton.innerHTML = `<span>查看更多</span>`;
+  faqLoadMoreButton.innerHTML = `<span>View More</span>`;
   faqLoadMoreButton.addEventListener("click", async () => {
     if (faqShowAll) return;
 
@@ -602,6 +602,7 @@ function renderFaqs(options = {}) {
       }),
     );
   });
+  faqList.classList.toggle("is-preview", !faqShowAll);
   faqList.replaceChildren(faqRows);
 
   if (faqShowAll) {
