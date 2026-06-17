@@ -290,14 +290,14 @@ button {
   width: 90px;
   height: 90px;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 .thumb-bg {
   display: block;
   width: 90px;
   height: 90px;
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 .thumb-phone {
@@ -679,6 +679,12 @@ button {
 
 .shared-transition-cover {
   z-index: 0;
+}
+
+.shared-transition-card {
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
 .shared-transition-mask {

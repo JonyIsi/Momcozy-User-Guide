@@ -92,6 +92,7 @@ const detailBackground = document.querySelector("#detailBackground");
 
 const SHARED_TRANSITION_MS = 720;
 const CONTENT_REVEAL_DELAY_MS = 80;
+const SHARED_CARD_RADIUS = "16px";
 
 let activeIndex = 0;
 let startX = 0;
@@ -127,6 +128,15 @@ function setRect(element, rect) {
   element.style.height = `${rect.height}px`;
 }
 
+function getRectWithin(containerRect, rect) {
+  return {
+    left: rect.left - containerRect.left,
+    top: rect.top - containerRect.top,
+    width: rect.width,
+    height: rect.height,
+  };
+}
+
 function getActiveSlide() {
   return slides.children[activeIndex];
 }
@@ -160,6 +170,21 @@ function makeSharedElement({ className, rect, radius, src }) {
   element.style.borderRadius = radius;
   setRect(element, rect);
   return element;
+}
+
+function animateOpacity(element, fromOpacity, toOpacity) {
+  if (!element.animate) {
+    element.style.opacity = toOpacity;
+    return Promise.resolve();
+  }
+
+  const animation = element.animate([{ opacity: fromOpacity }, { opacity: toOpacity }], {
+    duration: SHARED_TRANSITION_MS,
+    easing: "cubic-bezier(0.22, 0.74, 0.22, 1)",
+    fill: "forwards",
+  });
+
+  return animation.finished.catch(() => undefined);
 }
 
 function animateSharedElement(element, from, to, options = {}) {
@@ -215,41 +240,62 @@ async function runSharedTransition(sourceThumb, direction) {
   const coverTo = direction === "open" ? detailPageRect : getRelativeRect(sourceCover);
   const phoneFrom = direction === "open" ? getRelativeRect(sourcePhone) : getRelativeRect(targetPhone);
   const phoneTo = direction === "open" ? getRelativeRect(targetPhone) : getRelativeRect(sourcePhone);
+  const phoneFromInCard = getRectWithin(coverFrom, phoneFrom);
+  const phoneToInCard = getRectWithin(coverTo, phoneTo);
+  const cardClone = makeSharedElement({
+    className: "shared-transition-card",
+    rect: coverFrom,
+    radius: SHARED_CARD_RADIUS,
+  });
   const coverClone = makeSharedElement({
     className: "shared-transition-cover",
     src: lockedBackgroundCover,
-    rect: coverFrom,
-    radius: direction === "open" ? "14px" : "0px",
+    rect: { left: 0, top: 0, width: coverFrom.width, height: coverFrom.height },
+    radius: "0px",
   });
   const maskClone = makeSharedElement({
     className: "shared-transition-mask",
-    rect: coverFrom,
-    radius: direction === "open" ? "14px" : "0px",
+    rect: { left: 0, top: 0, width: coverFrom.width, height: coverFrom.height },
+    radius: "0px",
   });
   const phoneClone = makeSharedElement({
     className: "shared-transition-phone",
     src: targetPhone.src,
-    rect: phoneFrom,
+    rect: phoneFromInCard,
     radius: "0px",
   });
 
-  layer.append(coverClone, maskClone, phoneClone);
+  cardClone.append(coverClone, maskClone, phoneClone);
+  layer.append(cardClone);
   sourceThumb.classList.add("is-shared-source");
   detailScreen.classList.add("is-shared-transition");
   await waitForFrame();
 
   await Promise.all([
-    animateSharedElement(coverClone, coverFrom, coverTo, {
-      fromRadius: direction === "open" ? "14px" : "0px",
-      toRadius: direction === "open" ? "0px" : "14px",
+    animateSharedElement(cardClone, coverFrom, coverTo, {
+      fromRadius: SHARED_CARD_RADIUS,
+      toRadius: SHARED_CARD_RADIUS,
     }),
-    animateSharedElement(maskClone, coverFrom, coverTo, {
-      fromRadius: direction === "open" ? "14px" : "0px",
-      toRadius: direction === "open" ? "0px" : "14px",
-      fromOpacity: direction === "open" ? 0 : 1,
-      toOpacity: direction === "open" ? 1 : 0,
-    }),
-    animateSharedElement(phoneClone, phoneFrom, phoneTo, {
+    animateSharedElement(
+      coverClone,
+      { left: 0, top: 0, width: coverFrom.width, height: coverFrom.height },
+      { left: 0, top: 0, width: coverTo.width, height: coverTo.height },
+      {
+        fromRadius: "0px",
+        toRadius: "0px",
+      },
+    ),
+    animateSharedElement(
+      maskClone,
+      { left: 0, top: 0, width: coverFrom.width, height: coverFrom.height },
+      { left: 0, top: 0, width: coverTo.width, height: coverTo.height },
+      {
+        fromRadius: "0px",
+        toRadius: "0px",
+      },
+    ),
+    animateOpacity(maskClone, direction === "open" ? 0 : 1, direction === "open" ? 1 : 0),
+    animateSharedElement(phoneClone, phoneFromInCard, phoneToInCard, {
       fromRadius: "0px",
       toRadius: "0px",
     }),
