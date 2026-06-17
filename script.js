@@ -406,6 +406,7 @@ async function openDetail(index, sourceEl) {
 
   const slideIndex = index % detailSlides.length;
   setActive(slideIndex, false);
+  detailNavTitle.textContent = guides[index]?.title || detailSlides[slideIndex]?.title || "New Update";
   lastOpenedThumb = sourceEl || getThumbForSlide(slideIndex);
   setDetailBackground(detailSlides[slideIndex]?.cover);
   setTransitionLocked(Boolean(sourceEl));
@@ -464,7 +465,6 @@ async function closeDetail() {
 
 function setActive(index, animate = true) {
   activeIndex = Math.max(0, Math.min(detailSlides.length - 1, index));
-  detailNavTitle.textContent = detailSlides[activeIndex]?.title || "New Update";
   slides.style.transitionDuration = animate ? "520ms" : "0ms";
   slides.style.transform = `translate3d(${-activeIndex * 100}%, 0, 0)`;
   [...dots.children].forEach((dot, dotIndex) => {
