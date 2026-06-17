@@ -216,8 +216,7 @@ button {
 }
 
 .intro-copy p,
-.contact-section p,
-.faq-row-open p {
+.contact-section p {
   margin: 0;
   color: #8f858d;
   font-size: 14px;
@@ -329,10 +328,12 @@ button {
 }
 
 .faq-row img {
+  flex: 0 0 20px;
   transform: rotate(90deg);
+  transition: transform 240ms var(--ease);
 }
 
-.faq-row img.is-expanded {
+.faq-item.is-expanded .faq-row img {
   transform: rotate(-90deg);
 }
 
@@ -356,6 +357,10 @@ button {
   border-top: 1px solid var(--line);
 }
 
+.faq-item {
+  border-bottom: 1px solid var(--line);
+}
+
 .faq-row {
   display: flex;
   align-items: flex-start;
@@ -364,14 +369,17 @@ button {
   min-height: 56px;
   padding: 20px 0;
   border: 0;
-  border-bottom: 1px solid var(--line);
   background: transparent;
   text-align: left;
   color: #3b303a;
+  cursor: pointer;
 }
 
-.faq-row span,
-.faq-row h3 {
+.faq-item.is-expanded .faq-row {
+  padding-bottom: 8px;
+}
+
+.faq-row span {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
@@ -379,17 +387,27 @@ button {
   line-height: 1.36;
 }
 
-.faq-row img {
-  flex: 0 0 20px;
+.faq-panel {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 280ms var(--ease),
+    opacity 220ms var(--ease);
 }
 
-.faq-row-open {
-  min-height: 116px;
+.faq-item.is-expanded .faq-panel {
+  max-height: 180px;
+  opacity: 1;
 }
 
-.faq-row-open p {
+.faq-panel p {
   max-width: 342px;
-  margin-top: 8px;
+  margin: -4px 28px 20px 0;
+  overflow: hidden;
+  color: #8f858d;
+  font-size: 14px;
+  line-height: 1.42;
 }
 
 .contact-section {

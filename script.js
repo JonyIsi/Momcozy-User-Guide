@@ -42,11 +42,45 @@ const guides = [
 ];
 
 const detailSlides = guides.slice(0, 3);
+const faqs = [
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+    expanded: true,
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+];
 
 const app = document.querySelector(".app");
 const listScreen = document.querySelector("#listScreen");
 const detailScreen = document.querySelector("#detailScreen");
 const guideList = document.querySelector("#guideList");
+const faqList = document.querySelector("#faqList");
 const slides = document.querySelector("#slides");
 const dots = document.querySelector("#progressDots");
 const carousel = document.querySelector("#carousel");
@@ -99,10 +133,38 @@ function slideTemplate(item) {
   return slide;
 }
 
+function faqTemplate(item, index) {
+  const faq = document.createElement("article");
+  const contentId = `faq-panel-${index}`;
+  faq.className = "faq-item";
+  faq.classList.toggle("is-expanded", Boolean(item.expanded));
+  faq.innerHTML = `
+    <button class="faq-row" type="button" aria-expanded="${item.expanded ? "true" : "false"}" aria-controls="${contentId}">
+      <span>${item.title}</span>
+      <img src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true">
+    </button>
+    <div class="faq-panel" id="${contentId}">
+      <p>${item.text}</p>
+    </div>
+  `;
+
+  const button = faq.querySelector(".faq-row");
+  button.addEventListener("click", () => {
+    const expanded = faq.classList.toggle("is-expanded");
+    button.setAttribute("aria-expanded", expanded ? "true" : "false");
+  });
+
+  return faq;
+}
+
 function render() {
   const rows = document.createDocumentFragment();
   guides.forEach((item, index) => rows.appendChild(rowTemplate(item, index)));
   guideList.appendChild(rows);
+
+  const faqRows = document.createDocumentFragment();
+  faqs.forEach((item, index) => faqRows.appendChild(faqTemplate(item, index)));
+  faqList.appendChild(faqRows);
 
   const slideFragment = document.createDocumentFragment();
   detailSlides.forEach((item) => slideFragment.appendChild(slideTemplate(item)));
