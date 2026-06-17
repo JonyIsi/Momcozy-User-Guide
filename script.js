@@ -6,6 +6,7 @@ const guides = [
     detailTitle: "What's on Home?",
     detailText:
       "Everything you use most lives right on Home. Your records, reminders, and personalized Tips are always within reach. Check your current stage, upcoming activities, explore AI Lactation Plan and AI Sleep Prediction, and discover curated articles and products—all from one place.",
+    detailNote: "For informational purposes only. Always follow your healthcare provider's advice.",
   },
   {
     title: "Daily Check-ins: All Your Records in One Place",
@@ -13,7 +14,8 @@ const guides = [
     cover: "./assets/momcozy-cover-purple.png",
     detailTitle: "AI Tips",
     detailText:
-      "AI Tips are personalized to your current stage and updated daily with content that's relevant to you right now.\n\nTap FOR YOU, BABY CARE, or BREASTFEEDING to switch categories. From TTC to pregnancy to postpartum, your Tips evolve along with your journey.\n\nFor informational purposes only. Always follow your healthcare provider's advice.",
+      "AI Tips are personalized to your current stage and updated daily with content that's relevant to you right now.\n\nTap FOR YOU, BABY CARE, or BREASTFEEDING to switch categories. From TTC to pregnancy to postpartum, your Tips evolve along with your journey.",
+    detailNote: "For informational purposes only. Always follow your healthcare provider's advice.",
   },
   {
     title: "Reminder: Stay on Top of Everyday Tasks",
@@ -41,7 +43,7 @@ const guides = [
   },
 ];
 
-const detailSlides = guides.slice(0, 3);
+const detailSlides = guides;
 const faqs = [
   {
     title: "This is a chapter title",
@@ -85,11 +87,178 @@ const slides = document.querySelector("#slides");
 const dots = document.querySelector("#progressDots");
 const carousel = document.querySelector("#carousel");
 const backButton = document.querySelector("#backButton");
+const detailNavTitle = document.querySelector(".detail-nav h2");
+const detailBackground = document.querySelector("#detailBackground");
+
+const SHARED_TRANSITION_MS = 720;
+const CONTENT_REVEAL_DELAY_MS = 80;
 
 let activeIndex = 0;
 let startX = 0;
 let currentX = 0;
 let dragging = false;
+let transitionLocked = false;
+let lastOpenedThumb = null;
+let lockedBackgroundCover = guides[0].cover;
+
+function waitForFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function getRelativeRect(element) {
+  const appRect = app.getBoundingClientRect();
+  const rect = element.getBoundingClientRect();
+  return {
+    left: rect.left - appRect.left,
+    top: rect.top - appRect.top,
+    width: rect.width,
+    height: rect.height,
+  };
+}
+
+function getSlidePageRect(slide) {
+  return getRelativeRect(slide);
+}
+
+function setRect(element, rect) {
+  element.style.left = `${rect.left}px`;
+  element.style.top = `${rect.top}px`;
+  element.style.width = `${rect.width}px`;
+  element.style.height = `${rect.height}px`;
+}
+
+function getActiveSlide() {
+  return slides.children[activeIndex];
+}
+
+function getThumbForSlide(index) {
+  const rows = guideList.querySelectorAll(".guide-row");
+  const row = rows[index] || rows[0];
+  return row?.querySelector("[data-cover-thumb]") || lastOpenedThumb;
+}
+
+function setTransitionLocked(locked) {
+  transitionLocked = locked;
+  app.classList.toggle("is-transition-locked", locked);
+  carousel.toggleAttribute("inert", locked);
+  backButton.disabled = locked;
+}
+
+function setDetailBackground(cover) {
+  lockedBackgroundCover = cover || lockedBackgroundCover;
+  detailBackground.src = lockedBackgroundCover;
+}
+
+function makeSharedElement({ className, rect, radius, src }) {
+  const element = src ? document.createElement("img") : document.createElement("div");
+  element.className = className;
+  if (src) {
+    element.src = src;
+    element.alt = "";
+  }
+  element.setAttribute("aria-hidden", "true");
+  element.style.borderRadius = radius;
+  setRect(element, rect);
+  return element;
+}
+
+function animateSharedElement(element, from, to, options = {}) {
+  if (!element.animate) {
+    setRect(element, to);
+    element.style.opacity = options.toOpacity ?? 1;
+    return Promise.resolve();
+  }
+
+  const animation = element.animate(
+    [
+      {
+        left: `${from.left}px`,
+        top: `${from.top}px`,
+        width: `${from.width}px`,
+        height: `${from.height}px`,
+        borderRadius: options.fromRadius,
+        opacity: options.fromOpacity ?? 1,
+      },
+      {
+        left: `${to.left}px`,
+        top: `${to.top}px`,
+        width: `${to.width}px`,
+        height: `${to.height}px`,
+        borderRadius: options.toRadius,
+        opacity: options.toOpacity ?? 1,
+      },
+    ],
+    {
+      duration: SHARED_TRANSITION_MS,
+      easing: "cubic-bezier(0.22, 0.74, 0.22, 1)",
+      fill: "forwards",
+    },
+  );
+
+  return animation.finished.catch(() => undefined);
+}
+
+async function runSharedTransition(sourceThumb, direction) {
+  const slide = getActiveSlide();
+  const sourceCover = sourceThumb?.querySelector(".thumb-bg");
+  const sourcePhone = sourceThumb?.querySelector(".thumb-phone");
+  const targetPhone = slide?.querySelector(".stage-phone");
+
+  if (!sourceCover || !sourcePhone || !targetPhone) return;
+
+  const layer = document.createElement("div");
+  layer.className = "shared-transition-layer";
+  app.appendChild(layer);
+
+  const detailPageRect = getSlidePageRect(slide);
+  const coverFrom = direction === "open" ? getRelativeRect(sourceCover) : detailPageRect;
+  const coverTo = direction === "open" ? detailPageRect : getRelativeRect(sourceCover);
+  const phoneFrom = direction === "open" ? getRelativeRect(sourcePhone) : getRelativeRect(targetPhone);
+  const phoneTo = direction === "open" ? getRelativeRect(targetPhone) : getRelativeRect(sourcePhone);
+  const coverClone = makeSharedElement({
+    className: "shared-transition-cover",
+    src: lockedBackgroundCover,
+    rect: coverFrom,
+    radius: direction === "open" ? "14px" : "0px",
+  });
+  const maskClone = makeSharedElement({
+    className: "shared-transition-mask",
+    rect: coverFrom,
+    radius: direction === "open" ? "14px" : "0px",
+  });
+  const phoneClone = makeSharedElement({
+    className: "shared-transition-phone",
+    src: targetPhone.src,
+    rect: phoneFrom,
+    radius: "0px",
+  });
+
+  layer.append(coverClone, maskClone, phoneClone);
+  sourceThumb.classList.add("is-shared-source");
+  detailScreen.classList.add("is-shared-transition");
+  await waitForFrame();
+
+  await Promise.all([
+    animateSharedElement(coverClone, coverFrom, coverTo, {
+      fromRadius: direction === "open" ? "14px" : "0px",
+      toRadius: direction === "open" ? "0px" : "14px",
+    }),
+    animateSharedElement(maskClone, coverFrom, coverTo, {
+      fromRadius: direction === "open" ? "14px" : "0px",
+      toRadius: direction === "open" ? "0px" : "14px",
+      fromOpacity: direction === "open" ? 0 : 1,
+      toOpacity: direction === "open" ? 1 : 0,
+    }),
+    animateSharedElement(phoneClone, phoneFrom, phoneTo, {
+      fromRadius: "0px",
+      toRadius: "0px",
+    }),
+  ]);
+
+  layer.remove();
+  sourceThumb.classList.remove("is-shared-source");
+  detailScreen.classList.remove("is-shared-transition");
+}
 
 function rowTemplate(item, index) {
   const button = document.createElement("button");
@@ -119,7 +288,7 @@ function slideTemplate(item) {
   slide.innerHTML = `
     <div class="phone-stage">
       <figure class="phone-shot">
-        <img src="./assets/momcozy-phone.png" alt="">
+        <img class="stage-phone" src="./assets/momcozy-phone.png" alt="">
       </figure>
     </div>
     <div class="slide-copy">
@@ -128,6 +297,7 @@ function slideTemplate(item) {
         .split("\n\n")
         .map((paragraph) => `<p>${paragraph}</p>`)
         .join("")}
+      ${item.detailNote ? `<p class="slide-note">${item.detailNote}</p>` : ""}
     </div>
   `;
   return slide;
@@ -182,49 +352,72 @@ function render() {
   setActive(0, false);
 }
 
-function setOpenOrigin(sourceEl) {
+async function openDetail(index, sourceEl) {
+  if (transitionLocked) return;
+
+  const slideIndex = index % detailSlides.length;
+  setActive(slideIndex, false);
+  lastOpenedThumb = sourceEl || getThumbForSlide(slideIndex);
+  setDetailBackground(detailSlides[slideIndex]?.cover);
+  setTransitionLocked(Boolean(sourceEl));
+
+  detailScreen.classList.add("is-active", "is-content-hidden");
+  detailScreen.removeAttribute("aria-hidden");
+
   if (!sourceEl) {
-    detailScreen.style.setProperty("--enter-x", "0px");
-    detailScreen.style.setProperty("--enter-y", "0px");
+    listScreen.classList.add("is-leaving");
+    listScreen.classList.remove("is-active");
+    detailScreen.classList.remove("is-content-hidden");
+    setTransitionLocked(false);
     return;
   }
 
-  const appRect = app.getBoundingClientRect();
-  const sourceRect = sourceEl.getBoundingClientRect();
-  const sourceX = sourceRect.left + sourceRect.width / 2 - appRect.left;
-  const sourceY = sourceRect.top + sourceRect.height / 2 - appRect.top;
-  const targetX = appRect.width / 2;
-  const targetY = 320;
-
-  detailScreen.style.setProperty("--enter-x", `${sourceX - targetX}px`);
-  detailScreen.style.setProperty("--enter-y", `${sourceY - targetY}px`);
-}
-
-function openDetail(index, sourceEl) {
-  setOpenOrigin(sourceEl);
-  setActive(index % detailSlides.length, false);
+  await waitForFrame();
+  await runSharedTransition(sourceEl, "open");
   listScreen.classList.add("is-leaving");
   listScreen.classList.remove("is-active");
-  detailScreen.classList.add("is-active", "is-opening");
-  detailScreen.removeAttribute("aria-hidden");
-  window.setTimeout(() => detailScreen.classList.remove("is-opening"), 720);
+  window.setTimeout(() => {
+    detailScreen.classList.remove("is-content-hidden");
+    setTransitionLocked(false);
+  }, CONTENT_REVEAL_DELAY_MS);
 }
 
-function closeDetail() {
-  detailScreen.classList.add("is-closing");
-  window.setTimeout(() => {
-    detailScreen.classList.remove("is-active", "is-closing");
-    detailScreen.setAttribute("aria-hidden", "true");
-    listScreen.classList.add("is-active");
-    listScreen.classList.remove("is-leaving");
-    if (location.hash.startsWith("#detail")) {
-      history.replaceState(null, "", location.pathname + location.search);
-    }
-  }, 300);
+async function closeDetail() {
+  if (transitionLocked) return;
+
+  const sourceThumb = lastOpenedThumb || getThumbForSlide(activeIndex);
+  setTransitionLocked(Boolean(sourceThumb));
+  detailScreen.classList.add("is-content-hidden");
+
+  if (!sourceThumb) {
+    detailScreen.classList.add("is-closing");
+    window.setTimeout(() => {
+      detailScreen.classList.remove("is-active", "is-closing", "is-content-hidden");
+      detailScreen.setAttribute("aria-hidden", "true");
+      listScreen.classList.add("is-active");
+      listScreen.classList.remove("is-leaving");
+      setTransitionLocked(false);
+    }, 300);
+    return;
+  }
+
+  listScreen.classList.add("is-active", "is-return-target");
+  listScreen.classList.remove("is-leaving");
+  await waitForFrame();
+  await runSharedTransition(sourceThumb, "close");
+  detailScreen.classList.remove("is-active", "is-content-hidden");
+  detailScreen.setAttribute("aria-hidden", "true");
+  listScreen.classList.remove("is-return-target");
+  setTransitionLocked(false);
+
+  if (location.hash.startsWith("#detail")) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
 }
 
 function setActive(index, animate = true) {
   activeIndex = Math.max(0, Math.min(detailSlides.length - 1, index));
+  detailNavTitle.textContent = detailSlides[activeIndex]?.title || "New Update";
   slides.style.transitionDuration = animate ? "520ms" : "0ms";
   slides.style.transform = `translate3d(${-activeIndex * 100}%, 0, 0)`;
   [...dots.children].forEach((dot, dotIndex) => {
@@ -234,6 +427,7 @@ function setActive(index, animate = true) {
 }
 
 function pointerDown(event) {
+  if (transitionLocked) return;
   dragging = true;
   startX = event.clientX ?? event.touches?.[0]?.clientX ?? 0;
   currentX = startX;
@@ -241,7 +435,7 @@ function pointerDown(event) {
 }
 
 function pointerMove(event) {
-  if (!dragging) return;
+  if (!dragging || transitionLocked) return;
   currentX = event.clientX ?? event.touches?.[0]?.clientX ?? currentX;
   const delta = currentX - startX;
   const resistance =
@@ -252,7 +446,7 @@ function pointerMove(event) {
 }
 
 function pointerUp() {
-  if (!dragging) return;
+  if (!dragging || transitionLocked) return;
   dragging = false;
   const delta = currentX - startX;
   const threshold = Math.min(76, carousel.clientWidth * 0.2);
@@ -272,6 +466,7 @@ carousel.addEventListener("pointermove", pointerMove);
 carousel.addEventListener("pointerup", pointerUp);
 carousel.addEventListener("pointercancel", pointerUp);
 carousel.addEventListener("keydown", (event) => {
+  if (transitionLocked) return;
   if (event.key === "ArrowRight") setActive(activeIndex + 1);
   if (event.key === "ArrowLeft") setActive(activeIndex - 1);
   if (event.key === "Escape") closeDetail();
