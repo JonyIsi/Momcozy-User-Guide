@@ -523,8 +523,8 @@ button {
 }
 
 .faq-panel p {
-  max-width: 342px;
-  margin: -4px 28px 20px 0;
+  max-width: 100%;
+  margin: -4px 0 20px;
   overflow: hidden;
   color: #8f858d;
   font-size: 14px;
