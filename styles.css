@@ -188,9 +188,7 @@ button {
   padding: 0 16px;
   color: #ffffff;
   overflow: hidden;
-  background-image:
-    linear-gradient(180deg, rgba(29, 40, 45, 0.12) 0%, rgba(29, 40, 45, 0.12) 52%, rgba(18, 17, 18, 0.42) 100%),
-    url("./assets/momcozy-hero.png");
+  background-image: url("./assets/momcozy-hero.png");
   background-size: cover;
   background-position: center top;
 }
