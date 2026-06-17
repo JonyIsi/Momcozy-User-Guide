@@ -91,6 +91,7 @@ const detailNavTitle = document.querySelector(".detail-nav h2");
 const detailBackground = document.querySelector("#detailBackground");
 
 const SHARED_TRANSITION_MS = 500;
+const SHARED_LAYER_FADE_MS = 200;
 const SHARED_CARD_RADIUS = "16px";
 
 let activeIndex = 0;
@@ -104,6 +105,10 @@ let currentDetailSlides = [];
 
 function waitForFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function wait(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function getRelativeRect(element) {
@@ -206,19 +211,27 @@ function makeSharedElement({ className, rect, radius, src }) {
   return element;
 }
 
-function animateOpacity(element, fromOpacity, toOpacity) {
+function animateOpacity(element, fromOpacity, toOpacity, duration = SHARED_TRANSITION_MS) {
   if (!element.animate) {
     element.style.opacity = toOpacity;
     return Promise.resolve();
   }
 
   const animation = element.animate([{ opacity: fromOpacity }, { opacity: toOpacity }], {
-    duration: SHARED_TRANSITION_MS,
+    duration,
     easing: "cubic-bezier(0.22, 0.74, 0.22, 1)",
     fill: "forwards",
   });
 
   return animation.finished.catch(() => undefined);
+}
+
+async function fadeOutSharedLayer(layer) {
+  layer.style.opacity = "1";
+  layer.style.transition = `opacity ${SHARED_LAYER_FADE_MS}ms cubic-bezier(0.22, 0.74, 0.22, 1)`;
+  layer.getBoundingClientRect();
+  layer.style.opacity = "0";
+  await wait(SHARED_LAYER_FADE_MS);
 }
 
 function animateSharedElement(element, from, to, options = {}) {
@@ -339,6 +352,7 @@ async function runSharedTransition(sourceThumb, direction) {
   if (direction === "open") {
     detailScreen.classList.remove("is-content-hidden");
     await waitForFrame();
+    await fadeOutSharedLayer(layer);
     detailScreen.classList.remove("is-shared-transition");
   }
   layer.remove();
