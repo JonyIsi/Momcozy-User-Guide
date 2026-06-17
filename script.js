@@ -91,7 +91,6 @@ const detailNavTitle = document.querySelector(".detail-nav h2");
 const detailBackground = document.querySelector("#detailBackground");
 
 const SHARED_TRANSITION_MS = 720;
-const CONTENT_REVEAL_DELAY_MS = 80;
 const SHARED_CARD_RADIUS = "16px";
 
 let activeIndex = 0;
@@ -301,11 +300,13 @@ async function runSharedTransition(sourceThumb, direction) {
     }),
   ]);
 
-  layer.remove();
   sourceThumb.classList.remove("is-shared-source");
   if (direction === "open") {
+    detailScreen.classList.remove("is-content-hidden");
+    await waitForFrame();
     detailScreen.classList.remove("is-shared-transition");
   }
+  layer.remove();
 }
 
 function rowTemplate(item, index) {
@@ -424,10 +425,7 @@ async function openDetail(index, sourceEl) {
   await runSharedTransition(sourceEl, "open");
   listScreen.classList.add("is-leaving");
   listScreen.classList.remove("is-active");
-  window.setTimeout(() => {
-    detailScreen.classList.remove("is-content-hidden");
-    setTransitionLocked(false);
-  }, CONTENT_REVEAL_DELAY_MS);
+  setTransitionLocked(false);
 }
 
 async function closeDetail() {

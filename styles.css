@@ -117,18 +117,16 @@ button {
   transition: none;
 }
 
+.screen-detail.is-content-hidden .detail-background,
+.screen-detail.is-content-hidden .detail-gradient-mask,
+.screen-detail.is-content-hidden .statusbar,
 .screen-detail.is-content-hidden .detail-nav,
-.screen-detail.is-content-hidden .slide-copy,
+.screen-detail.is-content-hidden .carousel,
 .screen-detail.is-content-hidden .detail-footer {
   opacity: 0;
+  visibility: hidden;
   transform: none;
   transition-duration: 180ms;
-}
-
-.screen-detail.is-shared-transition .detail-background,
-.screen-detail.is-shared-transition .detail-gradient-mask,
-.screen-detail.is-shared-transition .stage-phone {
-  visibility: hidden;
 }
 
 .screen-detail.is-shared-transition {
