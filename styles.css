@@ -328,8 +328,12 @@ button {
   object-fit: contain;
 }
 
+.faq-row img {
+  transform: rotate(90deg);
+}
+
 .faq-row img.is-expanded {
-  transform: rotate(180deg);
+  transform: rotate(-90deg);
 }
 
 .faq-section,
