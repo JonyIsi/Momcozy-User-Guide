@@ -529,6 +529,7 @@ async function openDetail(index, sourceEl) {
   setDetailBackground(guides[guideIndex]?.cover);
   setTransitionLocked(Boolean(sourceEl));
 
+  detailScreen.classList.toggle("is-shared-transition", Boolean(sourceEl));
   detailScreen.classList.add("is-active", "is-content-hidden");
   detailScreen.removeAttribute("aria-hidden");
 
