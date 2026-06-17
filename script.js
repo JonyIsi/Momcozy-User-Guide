@@ -373,6 +373,60 @@ async function runSharedTransition(sourceThumb, direction) {
   layer.remove();
 }
 
+function bindGuideRowOpen(button, index) {
+  let pressPointerId = null;
+  let pressStartX = 0;
+  let pressStartY = 0;
+  let pressCancelled = false;
+
+  const clearPress = () => {
+    pressPointerId = null;
+    pressCancelled = false;
+  };
+
+  button.addEventListener("pointerdown", (event) => {
+    if (!event.isPrimary || event.button > 0 || transitionLocked) return;
+
+    pressPointerId = event.pointerId;
+    pressStartX = event.clientX;
+    pressStartY = event.clientY;
+    pressCancelled = false;
+    button.setPointerCapture?.(event.pointerId);
+  });
+
+  button.addEventListener("pointermove", (event) => {
+    if (event.pointerId !== pressPointerId) return;
+
+    const movedX = Math.abs(event.clientX - pressStartX);
+    const movedY = Math.abs(event.clientY - pressStartY);
+    if (movedX > 8 || movedY > 8) pressCancelled = true;
+  });
+
+  button.addEventListener("pointerup", (event) => {
+    if (event.pointerId !== pressPointerId) return;
+
+    const rect = button.getBoundingClientRect();
+    const releasedInside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+
+    const shouldOpen = !pressCancelled && releasedInside;
+    button.releasePointerCapture?.(event.pointerId);
+    clearPress();
+
+    if (shouldOpen) openDetail(index, button.querySelector("[data-cover-thumb]"));
+  });
+
+  button.addEventListener("pointercancel", clearPress);
+
+  button.addEventListener("keyup", (event) => {
+    if (transitionLocked || (event.key !== "Enter" && event.key !== " ")) return;
+    openDetail(index, button.querySelector("[data-cover-thumb]"));
+  });
+}
+
 function rowTemplate(item, index) {
   const button = document.createElement("button");
   const tagTint = item.tagTint || "pink";
@@ -392,7 +446,7 @@ function rowTemplate(item, index) {
       <img src="./assets/Icon_Arrow2.png" alt="">
     </span>
   `;
-  button.addEventListener("click", () => openDetail(index, button.querySelector("[data-cover-thumb]")));
+  bindGuideRowOpen(button, index);
   return button;
 }
 
