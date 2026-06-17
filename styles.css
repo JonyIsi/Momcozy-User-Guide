@@ -331,10 +331,11 @@ button {
 
 .thumb-phone {
   position: absolute;
-  left: 19px;
+  left: 50%;
   top: 16px;
-  width: 52px;
+  width: 120px;
   height: auto;
+  transform: translateX(-50%);
   transform-origin: 50% 18%;
 }
 
@@ -602,7 +603,7 @@ button {
   z-index: 1;
   top: 126px;
   left: 50%;
-  width: 204px;
+  width: 402px;
   margin: 0;
   border: 0;
   background: transparent;
