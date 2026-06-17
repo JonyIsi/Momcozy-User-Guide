@@ -2,6 +2,7 @@ const guides = [
   {
     title: "Home: Your Daily Hub",
     updates: "3 New Updates",
+    tagTint: "pink",
     cover: "./assets/momcozy-cover-pink.png",
     detailTitle: "What's on Home?",
     detailText:
@@ -11,6 +12,7 @@ const guides = [
   {
     title: "Daily Check-ins: All Your Records in One Place",
     updates: "2 New Updates",
+    tagTint: "yellow",
     cover: "./assets/momcozy-cover-purple.png",
     detailTitle: "AI Tips",
     detailText:
@@ -20,6 +22,7 @@ const guides = [
   {
     title: "Reminder: Stay on Top of Everyday Tasks",
     updates: "1 New Updates",
+    tagTint: "pink",
     cover: "./assets/momcozy-cover-pink.png",
     detailTitle: "Quick Logging",
     detailText:
@@ -28,6 +31,7 @@ const guides = [
   {
     title: "Personalized Support: AI Lactation Plan &AI Sleep Prediction",
     updates: "2 New Updates",
+    tagTint: "yellow",
     cover: "./assets/momcozy-cover-purple.png",
     detailTitle: "AI Tips",
     detailText:
@@ -36,6 +40,7 @@ const guides = [
   {
     title: "Devices: Everything Connected in One Place",
     updates: "1 New Updates",
+    tagTint: "pink",
     cover: "./assets/momcozy-cover-pink.png",
     detailTitle: "Quick Logging",
     detailText:
@@ -360,6 +365,7 @@ async function runSharedTransition(sourceThumb, direction) {
 
 function rowTemplate(item, index) {
   const button = document.createElement("button");
+  const tagTint = item.tagTint || "pink";
   button.className = "guide-row";
   button.type = "button";
   button.setAttribute("aria-label", `${item.title}, open details`);
@@ -370,7 +376,7 @@ function rowTemplate(item, index) {
     </span>
     <span class="guide-copy">
       <h3>${item.title}</h3>
-      <span class="update-tag">${item.updates}</span>
+      <span class="update-tag update-tag--${tagTint}">${item.updates}</span>
     </span>
     <span class="chevron" aria-hidden="true">
       <img src="./assets/Icon_Arrow2.png" alt="">

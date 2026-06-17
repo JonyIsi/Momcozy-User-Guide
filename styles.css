@@ -333,12 +333,30 @@ button {
   height: 24px;
   padding: 0 8px;
   border-radius: 8px;
-  color: #770523;
-  background: #FFF1F3;
   font-size: 12px;
   font-weight: 500;
   font-synthesis: none;
   line-height: 1;
+}
+
+.update-tag--pink {
+  color: #770523;
+  background: #FFF1F3;
+}
+
+.update-tag--yellow {
+  color: #7E451F;
+  background: #FFFBF0;
+}
+
+.update-tag--green {
+  color: #002D1F;
+  background: #F0F9F0;
+}
+
+.update-tag--purple {
+  color: #552C95;
+  background: #F4F2FF;
 }
 
 .chevron {
