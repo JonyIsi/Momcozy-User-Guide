@@ -90,7 +90,7 @@ const backButton = document.querySelector("#backButton");
 const detailNavTitle = document.querySelector(".detail-nav h2");
 const detailBackground = document.querySelector("#detailBackground");
 
-const SHARED_TRANSITION_MS = 720;
+const SHARED_TRANSITION_MS = 500;
 const SHARED_CARD_RADIUS = "16px";
 
 let activeIndex = 0;
