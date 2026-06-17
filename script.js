@@ -84,6 +84,7 @@ const faqs = [
 
 const app = document.querySelector(".app");
 const listScreen = document.querySelector("#listScreen");
+const listTopbar = document.querySelector("#listTopbar");
 const detailScreen = document.querySelector("#detailScreen");
 const guideList = document.querySelector("#guideList");
 const faqList = document.querySelector("#faqList");
@@ -98,6 +99,8 @@ const detailBackground = document.querySelector("#detailBackground");
 const SHARED_TRANSITION_MS = 500;
 const SHARED_LAYER_FADE_MS = 200;
 const SHARED_CARD_RADIUS = "16px";
+const LIST_TOPBAR_FADE_START = 0;
+const LIST_TOPBAR_FADE_END = 402;
 
 let activeIndex = 0;
 let startX = 0;
@@ -114,6 +117,13 @@ function waitForFrame() {
 
 function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function updateListTopbarBackground() {
+  const progress = (listScreen.scrollTop - LIST_TOPBAR_FADE_START) / (LIST_TOPBAR_FADE_END - LIST_TOPBAR_FADE_START);
+  const opacity = Math.max(0, Math.min(1, progress));
+  listTopbar.style.setProperty("--list-nav-bg-opacity", opacity.toFixed(3));
+  listTopbar.style.setProperty("--list-nav-icon-invert", (1 - opacity).toFixed(3));
 }
 
 function getRelativeRect(element) {
@@ -549,6 +559,7 @@ function pointerUp() {
 }
 
 backButton.addEventListener("click", closeDetail);
+listScreen.addEventListener("scroll", updateListTopbarBackground, { passive: true });
 carousel.addEventListener("pointerdown", pointerDown);
 carousel.addEventListener("pointermove", pointerMove);
 carousel.addEventListener("pointerup", pointerUp);
@@ -561,6 +572,7 @@ carousel.addEventListener("keydown", (event) => {
 });
 
 render();
+updateListTopbarBackground();
 
 const detailMatch = location.hash.match(/^#detail-(\d+)$/);
 if (detailMatch) {

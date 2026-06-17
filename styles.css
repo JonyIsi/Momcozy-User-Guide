@@ -73,6 +73,38 @@ button {
   display: none;
 }
 
+.list-topbar {
+  --list-nav-bg-opacity: 0;
+  --list-nav-icon-invert: 1;
+  position: sticky;
+  flex: 0 0 106px;
+  z-index: 20;
+  top: 0;
+  height: 106px;
+  margin-bottom: -106px;
+  pointer-events: none;
+}
+
+.list-topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, var(--list-nav-bg-opacity));
+  pointer-events: none;
+}
+
+.list-topbar .statusbar {
+  position: absolute;
+}
+
+.list-topbar .statusbar img {
+  filter: brightness(0) invert(var(--list-nav-icon-invert));
+}
+
+.list-topbar .nav-circle {
+  pointer-events: auto;
+}
+
 .screen-list.is-leaving {
   filter: saturate(0.96) brightness(0.98);
   opacity: 0;
