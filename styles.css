@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "Aeonik Soft Pro";
+  src: url("./assets/fonts/AeonikSoftPro-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aeonik Soft Pro";
+  src: url("./assets/fonts/AeonikSoftPro-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Exposure[-10]";
+  src: url("./assets/fonts/ExposureMinus10-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --page: #ffffff;
   --ink: #24131b;
