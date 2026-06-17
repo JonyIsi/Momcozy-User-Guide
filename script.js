@@ -80,6 +80,46 @@ const faqs = [
     text:
       "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
   },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
+  {
+    title: "This is a chapter title",
+    text:
+      "The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.",
+  },
 ];
 
 const app = document.querySelector(".app");
@@ -101,6 +141,8 @@ const SHARED_LAYER_FADE_MS = 200;
 const SHARED_CARD_RADIUS = "16px";
 const LIST_TOPBAR_FADE_START = 0;
 const LIST_TOPBAR_FADE_END = 402;
+const FAQ_INITIAL_COUNT = 4;
+const FAQ_LOAD_DELAY_MS = 650;
 
 let activeIndex = 0;
 let startX = 0;
@@ -110,6 +152,9 @@ let transitionLocked = false;
 let lastOpenedThumb = null;
 let lockedBackgroundCover = guides[0].cover;
 let currentDetailSlides = [];
+let faqShowAll = false;
+let faqLoadMoreButton = null;
+const expandedFaqIndexes = new Set();
 
 function waitForFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -484,13 +529,18 @@ function slideTemplate(item) {
   return slide;
 }
 
-function faqTemplate(item, index) {
+function faqTemplate(item, index, options = {}) {
   const faq = document.createElement("article");
   const contentId = `faq-panel-${index}`;
   faq.className = "faq-item";
-  faq.classList.toggle("is-expanded", Boolean(item.expanded));
+  const expanded = expandedFaqIndexes.has(index);
+  faq.classList.toggle("is-expanded", expanded);
+  if (options.reveal) {
+    faq.classList.add("is-revealing");
+    faq.style.setProperty("--faq-reveal-delay", `${options.revealDelay || 0}ms`);
+  }
   faq.innerHTML = `
-    <button class="faq-row" type="button" aria-expanded="${item.expanded ? "true" : "false"}" aria-controls="${contentId}">
+    <button class="faq-row" type="button" aria-expanded="${expanded ? "true" : "false"}" aria-controls="${contentId}">
       <span>${item.title}</span>
       <img src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true">
     </button>
@@ -501,11 +551,67 @@ function faqTemplate(item, index) {
 
   const button = faq.querySelector(".faq-row");
   button.addEventListener("click", () => {
-    const expanded = faq.classList.toggle("is-expanded");
-    button.setAttribute("aria-expanded", expanded ? "true" : "false");
+    const nextExpanded = faq.classList.toggle("is-expanded");
+    if (nextExpanded) {
+      expandedFaqIndexes.add(index);
+    } else {
+      expandedFaqIndexes.delete(index);
+    }
+    button.setAttribute("aria-expanded", nextExpanded ? "true" : "false");
   });
 
   return faq;
+}
+
+function setFaqLoadMoreLoading(isLoading) {
+  if (!faqLoadMoreButton) return;
+  faqLoadMoreButton.disabled = isLoading;
+  faqLoadMoreButton.setAttribute("aria-busy", isLoading ? "true" : "false");
+  faqLoadMoreButton.innerHTML = isLoading
+    ? `<span class="faq-load-spinner" aria-hidden="true"></span><span>Loading</span>`
+    : `<span>查看更多</span>`;
+}
+
+function ensureFaqLoadMoreButton() {
+  if (faqLoadMoreButton || faqs.length <= FAQ_INITIAL_COUNT) return;
+
+  faqLoadMoreButton = document.createElement("button");
+  faqLoadMoreButton.className = "faq-load-more";
+  faqLoadMoreButton.type = "button";
+  faqLoadMoreButton.innerHTML = `<span>查看更多</span>`;
+  faqLoadMoreButton.addEventListener("click", async () => {
+    if (faqShowAll) return;
+
+    setFaqLoadMoreLoading(true);
+    await wait(FAQ_LOAD_DELAY_MS);
+    faqShowAll = true;
+    renderFaqs({ revealFromIndex: FAQ_INITIAL_COUNT });
+  });
+  faqList.after(faqLoadMoreButton);
+}
+
+function renderFaqs(options = {}) {
+  const visibleFaqs = faqShowAll ? faqs : faqs.slice(0, FAQ_INITIAL_COUNT);
+  const faqRows = document.createDocumentFragment();
+  visibleFaqs.forEach((item, index) => {
+    const shouldReveal = Number.isFinite(options.revealFromIndex) && index >= options.revealFromIndex;
+    faqRows.appendChild(
+      faqTemplate(item, index, {
+        reveal: shouldReveal,
+        revealDelay: shouldReveal ? (index - options.revealFromIndex) * 90 : 0,
+      }),
+    );
+  });
+  faqList.replaceChildren(faqRows);
+
+  if (faqShowAll) {
+    faqLoadMoreButton?.remove();
+    faqLoadMoreButton = null;
+    return;
+  }
+
+  ensureFaqLoadMoreButton();
+  setFaqLoadMoreLoading(false);
 }
 
 function render() {
@@ -513,9 +619,7 @@ function render() {
   guides.forEach((item, index) => rows.appendChild(rowTemplate(item, index)));
   guideList.appendChild(rows);
 
-  const faqRows = document.createDocumentFragment();
-  faqs.forEach((item, index) => faqRows.appendChild(faqTemplate(item, index)));
-  faqList.appendChild(faqRows);
+  renderFaqs();
 }
 
 async function openDetail(index, sourceEl) {

@@ -443,6 +443,11 @@ button {
   border-bottom: 1px solid var(--line);
 }
 
+.faq-item.is-revealing {
+  animation: faq-reveal 360ms var(--ease) both;
+  animation-delay: var(--faq-reveal-delay, 0ms);
+}
+
 .faq-row {
   display: flex;
   align-items: flex-start;
@@ -490,6 +495,63 @@ button {
   color: #8f858d;
   font-size: 14px;
   line-height: 1.42;
+}
+
+.faq-load-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  margin-top: 20px;
+  border: 0;
+  border-radius: 24px;
+  color: #ffffff;
+  background: var(--wine);
+  font-size: 14px;
+  font-weight: 500;
+  font-synthesis: none;
+  cursor: pointer;
+  transition:
+    opacity 180ms var(--ease),
+    transform 180ms var(--ease);
+}
+
+.faq-load-more:active {
+  transform: scale(0.985);
+}
+
+.faq-load-more:disabled {
+  cursor: default;
+  opacity: 0.72;
+  transform: none;
+}
+
+.faq-load-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.38);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: faq-spin 780ms linear infinite;
+}
+
+@keyframes faq-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes faq-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .contact-section {
