@@ -235,6 +235,7 @@ button {
   margin: 0;
   font-family: "Exposure[-10]", Georgia, "Times New Roman", serif;
   font-size: 33px;
+  font-weight: 400;
   font-synthesis: none;
   line-height: 1.08;
   letter-spacing: -0.2px;
