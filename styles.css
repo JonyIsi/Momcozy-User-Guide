@@ -101,61 +101,16 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 54px;
-  padding: 0 39px;
-  font-size: 16px;
-  letter-spacing: 0;
-  color: #09070a;
+  height: 62px;
+  padding: 0;
+  pointer-events: none;
 }
 
-.statusbar-on-image {
-  color: #ffffff;
-}
-
-.system-icons {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.system-icons i {
+.statusbar img {
   display: block;
-  width: 4px;
-  border-radius: 2px;
-  background: currentColor;
-}
-
-.system-icons i:nth-child(1) {
-  height: 7px;
-}
-
-.system-icons i:nth-child(2) {
-  height: 10px;
-}
-
-.system-icons i:nth-child(3) {
-  height: 14px;
-}
-
-.system-icons b {
-  display: block;
-  width: 22px;
-  height: 12px;
-  margin-left: 5px;
-  border: 2px solid currentColor;
-  border-radius: 4px;
-  position: relative;
-}
-
-.system-icons b::after {
-  content: "";
-  position: absolute;
-  right: -5px;
-  top: 3px;
-  width: 2px;
-  height: 4px;
-  border-radius: 1px;
-  background: currentColor;
+  width: 119px;
+  height: 22px;
+  object-fit: contain;
 }
 
 .list-hero {
