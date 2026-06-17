@@ -103,8 +103,15 @@ button {
   transition-duration: 300ms;
 }
 
-.screen-detail.is-content-hidden {
+.screen-detail.is-active.is-content-hidden {
   opacity: 1;
+  pointer-events: none;
+  transform: none;
+  transition: none;
+}
+
+.screen-detail.is-content-hidden:not(.is-active) {
+  opacity: 0;
   pointer-events: none;
   transform: none;
   transition: none;

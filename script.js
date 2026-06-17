@@ -257,7 +257,9 @@ async function runSharedTransition(sourceThumb, direction) {
 
   layer.remove();
   sourceThumb.classList.remove("is-shared-source");
-  detailScreen.classList.remove("is-shared-transition");
+  if (direction === "open") {
+    detailScreen.classList.remove("is-shared-transition");
+  }
 }
 
 function rowTemplate(item, index) {
@@ -392,7 +394,7 @@ async function closeDetail() {
   if (!sourceThumb) {
     detailScreen.classList.add("is-closing");
     window.setTimeout(() => {
-      detailScreen.classList.remove("is-active", "is-closing", "is-content-hidden");
+      detailScreen.classList.remove("is-active", "is-closing");
       detailScreen.setAttribute("aria-hidden", "true");
       listScreen.classList.add("is-active");
       listScreen.classList.remove("is-leaving");
@@ -405,8 +407,9 @@ async function closeDetail() {
   listScreen.classList.remove("is-leaving");
   await waitForFrame();
   await runSharedTransition(sourceThumb, "close");
-  detailScreen.classList.remove("is-active", "is-content-hidden");
+  detailScreen.classList.remove("is-active");
   detailScreen.setAttribute("aria-hidden", "true");
+  detailScreen.classList.remove("is-shared-transition");
   listScreen.classList.remove("is-return-target");
   setTransitionLocked(false);
 
