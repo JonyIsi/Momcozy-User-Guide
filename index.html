@@ -1,73 +1,100 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>用户使用指南（H5）</title>
+    <title>Momcozy User Guide</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app" aria-label="iOS 26 新功能用户使用指南">
+    <main class="app" aria-label="Momcozy user guide">
       <section class="screen screen-list is-active" id="listScreen">
-        <div class="statusbar" aria-hidden="true">
-          <span>10:29</span>
-          <span class="island"><i></i></span>
-          <span class="system-icons">▮▮▮⌁ <b>54</b></span>
-        </div>
-
         <header class="list-hero">
-          <button class="nav-circle" type="button" aria-label="返回">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M15 18 9 12l6-6" />
-            </svg>
-          </button>
-          <div class="sparkle" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
+          <div class="statusbar statusbar-on-image" aria-hidden="true">
+            <span>7:41</span>
+            <span class="system-icons"><i></i><i></i><i></i><b></b></span>
           </div>
-          <h1>iOS 26 新功能</h1>
-          <p>探索全新设计，以全新方式保持联系、无缝沟通和表达自我。</p>
+          <button class="nav-circle" type="button" aria-label="Back">
+            <img src="./assets/Icon_Arrow1.png" alt="" aria-hidden="true" />
+          </button>
+          <h1>Momcozy just got better organized.</h1>
         </header>
 
+        <section class="intro-copy" aria-label="Guide introduction">
+          <p>We've reorganized the Home and Devices tabs to bring your records, reminders, devices, and the things you use most every day into one convenient place.</p>
+          <p>No need to remember multiple entry points or jump between pages to find what you need.</p>
+          <p>Life with a little one is busy enough.</p>
+          <p>We hope that whenever you open the app, what you want to check, log, or manage is right where you expect it.</p>
+          <p>This guide is short and simple—let's get you up to speed.</p>
+        </section>
+
         <div class="guide-list" id="guideList"></div>
+
+        <section class="faq-section" aria-label="Frequently asked questions">
+          <h2>FAQ</h2>
+          <div class="faq-list">
+            <button class="faq-row" type="button">
+              <span>This is a chapter title</span>
+              <img src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true" />
+            </button>
+            <article class="faq-row faq-row-open">
+              <div>
+                <h3>This is a chapter title</h3>
+                <p>The weeks after birth are a full-body reset — physical, emotional, hormonal. Some changes are expected and healthy; others are signals to reach out for support.</p>
+              </div>
+              <img class="is-expanded" src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true" />
+            </article>
+            <button class="faq-row" type="button">
+              <span>This is a chapter title</span>
+              <img src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true" />
+            </button>
+            <button class="faq-row" type="button">
+              <span>This is a chapter title</span>
+              <img src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true" />
+            </button>
+            <button class="faq-row" type="button">
+              <span>This is a chapter title</span>
+              <img src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true" />
+            </button>
+            <button class="faq-row" type="button">
+              <span>This is a chapter title</span>
+              <img src="./assets/Icon_Arrow2.png" alt="" aria-hidden="true" />
+            </button>
+          </div>
+        </section>
+
+        <section class="contact-section" aria-label="Feedback">
+          <h2>We're Listening</h2>
+          <p>We'd love to hear your feedback. If something feels off or you'd like to see improvements, let us know.</p>
+          <p>Need help? We're always here to support you.</p>
+          <button class="contact-button" type="button">
+            <img src="./assets/Icon_Help.png" alt="" aria-hidden="true" />
+            Contact Us
+          </button>
+        </section>
+
+        <div class="home-indicator" aria-hidden="true"></div>
       </section>
 
       <section class="screen screen-detail" id="detailScreen" aria-hidden="true">
         <div class="statusbar statusbar-detail" aria-hidden="true">
-          <span>10:29</span>
-          <span class="island"><i></i></span>
-          <span class="system-icons">▮▮▮⌁ <b>54</b></span>
+          <span>7:41</span>
+          <span class="system-icons"><i></i><i></i><i></i><b></b></span>
         </div>
 
         <header class="detail-nav">
-          <button class="nav-circle" type="button" id="backButton" aria-label="返回列表">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M15 18 9 12l6-6" />
-            </svg>
+          <button class="nav-circle" type="button" id="backButton" aria-label="Back to guide list">
+            <img src="./assets/Icon_Arrow1.png" alt="" aria-hidden="true" />
           </button>
-          <h2>新功能</h2>
-          <div class="nav-actions" aria-label="页面操作">
-            <button type="button" aria-label="分享">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 15V3m0 0L8 7m4-4 4 4" />
-                <path d="M5 11v8h14v-8" />
-              </svg>
-            </button>
-            <button type="button" aria-label="收藏">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M7 4h10v16l-5-3-5 3z" />
-              </svg>
-            </button>
-          </div>
+          <h2>New Update</h2>
         </header>
 
-        <div class="carousel" id="carousel" tabindex="0" aria-label="新功能详情，左右滑动切换">
+        <div class="carousel" id="carousel" tabindex="0" aria-label="New updates, swipe horizontally">
           <div class="slides" id="slides"></div>
         </div>
 
         <footer class="detail-footer">
-          <div class="progress" id="progressDots" aria-label="当前页"></div>
+          <div class="progress" id="progressDots" aria-label="Current page"></div>
         </footer>
       </section>
     </main>

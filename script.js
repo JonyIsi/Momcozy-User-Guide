@@ -1,55 +1,49 @@
 const guides = [
   {
-    title: "探索全新流动设计",
-    text: "Liquid Glass 让 App 图标、导航和控制更加生动有趣。若要更改图标外观，请按住主屏幕，轻点“编辑”，轻点“自定义”，然后轻点“透明”。",
-    image: "./assets/state-play.png",
-    phoneImage: "./assets/phone-flow.png",
-    crop: "50% 27%",
+    title: "Home: Your Daily Hub",
+    updates: "3 New Updates",
+    cover: "./assets/momcozy-cover-pink.png",
+    detailTitle: "What's on Home?",
+    detailText:
+      "Everything you use most lives right on Home. Your records, reminders, and personalized Tips are always within reach. Check your current stage, upcoming activities, explore AI Lactation Plan and AI Sleep Prediction, and discover curated articles and products—all from one place.",
   },
   {
-    title: "让锁定屏幕生动起来",
-    text: "将墙纸照片设为 3D 空间场景。按住锁定屏幕，轻点“自定义”，然后轻点空间场景按钮。",
-    image: "./assets/state-setup.png",
-    phoneImage: "./assets/phone-flow.png",
-    crop: "50% 18%",
+    title: "Daily Check-ins: All Your Records in One Place",
+    updates: "2 New Updates",
+    cover: "./assets/momcozy-cover-purple.png",
+    detailTitle: "AI Tips",
+    detailText:
+      "AI Tips are personalized to your current stage and updated daily with content that's relevant to you right now.\n\nTap FOR YOU, BABY CARE, or BREASTFEEDING to switch categories. From TTC to pregnancy to postpartum, your Tips evolve along with your journey.\n\nFor informational purposes only. Always follow your healthcare provider's advice.",
   },
   {
-    title: "添加背景",
-    text: "在“信息”对话中，轻点人名或群组名称，轻点“背景”，然后选取一个动态背景或任何一张照片。",
-    image: "./assets/state-complete.png",
-    phoneImage: "./assets/phone-background.png",
-    crop: "50% 24%",
+    title: "Reminder: Stay on Top of Everyday Tasks",
+    updates: "1 New Updates",
+    cover: "./assets/momcozy-cover-pink.png",
+    detailTitle: "Quick Logging",
+    detailText:
+      "The things you track most—pumping, feeding, sleep, and more—are now right on Home. Simply tap a card to quickly add a new record.",
   },
   {
-    title: "投票决定",
-    text: "让群聊成员一起做决定。轻点加号，然后选取“投票”。任何人都可添加更多选项，只需轻点“添加选项”即可。",
-    image: "./assets/state-setup.png",
-    phoneImage: "./assets/phone-background.png",
-    crop: "50% 70%",
+    title: "Personalized Support: AI Lactation Plan &AI Sleep Prediction",
+    updates: "2 New Updates",
+    cover: "./assets/momcozy-cover-purple.png",
+    detailTitle: "AI Tips",
+    detailText:
+      "AI Tips are personalized to your current stage and updated daily with content that's relevant to you right now.\n\nTap FOR YOU, BABY CARE, or BREASTFEEDING to switch categories. From TTC to pregnancy to postpartum, your Tips evolve along with your journey.",
   },
   {
-    title: "筛选未知发件人",
-    text: "用新的筛选视图整理消息。未知发件人与垃圾信息会分开放置，让常用对话保持清爽。",
-    image: "./assets/state-play.png",
-    phoneImage: "./assets/phone-flow.png",
-    crop: "50% 62%",
-  },
-  {
-    title: "轻松共享实时进展",
-    text: "在需要同步状态时共享实时活动，朋友可以直接在锁定屏幕或灵动岛中查看最新进度。",
-    image: "./assets/state-complete.png",
-    phoneImage: "./assets/phone-background.png",
-    crop: "50% 66%",
-  },
-  {
-    title: "用新方式表达自己",
-    text: "用更鲜活的效果、背景和分享入口，让每一次沟通都更贴近你的当下心情。",
-    image: "./assets/state-setup.png",
-    phoneImage: "./assets/phone-flow.png",
-    crop: "50% 42%",
+    title: "Devices: Everything Connected in One Place",
+    updates: "1 New Updates",
+    cover: "./assets/momcozy-cover-pink.png",
+    detailTitle: "Quick Logging",
+    detailText:
+      "The things you track most—pumping, feeding, sleep, and more—are now right on Home. Simply tap a card to quickly add a new record.",
   },
 ];
 
+const detailSlides = guides.slice(0, 3);
+
+const app = document.querySelector(".app");
 const listScreen = document.querySelector("#listScreen");
 const detailScreen = document.querySelector("#detailScreen");
 const guideList = document.querySelector("#guideList");
@@ -67,18 +61,21 @@ function rowTemplate(item, index) {
   const button = document.createElement("button");
   button.className = "guide-row";
   button.type = "button";
-  button.setAttribute("aria-label", `${item.title}，点击查看详情`);
+  button.setAttribute("aria-label", `${item.title}, open details`);
   button.innerHTML = `
-    <span class="thumb"><img src="${item.image}" alt="" style="object-position:${item.crop}"></span>
+    <span class="thumb" data-cover-thumb>
+      <img class="thumb-bg" src="${item.cover}" alt="">
+      <img class="thumb-phone" src="./assets/momcozy-phone.png" alt="">
+    </span>
     <span class="guide-copy">
       <h3>${item.title}</h3>
-      <p>${item.text}</p>
+      <span class="update-tag">${item.updates}</span>
     </span>
     <span class="chevron" aria-hidden="true">
-      <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      <img src="./assets/Icon_Arrow2.png" alt="">
     </span>
   `;
-  button.addEventListener("click", () => openDetail(index));
+  button.addEventListener("click", () => openDetail(index, button.querySelector("[data-cover-thumb]")));
   return button;
 }
 
@@ -88,59 +85,85 @@ function slideTemplate(item) {
   slide.innerHTML = `
     <div class="phone-stage">
       <figure class="phone-shot">
-        <img src="${item.phoneImage}" alt="${item.title}示意图">
+        <img src="./assets/momcozy-phone.png" alt="">
       </figure>
     </div>
     <div class="slide-copy">
-      <h3>${item.title}</h3>
-      <p>${item.text}</p>
+      <h3>${item.detailTitle}</h3>
+      ${item.detailText
+        .split("\n\n")
+        .map((paragraph) => `<p>${paragraph}</p>`)
+        .join("")}
     </div>
   `;
   return slide;
 }
 
 function render() {
-  const fragment = document.createDocumentFragment();
-  guides.slice(0, 4).forEach((item, index) => fragment.appendChild(rowTemplate(item, index)));
-  guideList.appendChild(fragment);
+  const rows = document.createDocumentFragment();
+  guides.forEach((item, index) => rows.appendChild(rowTemplate(item, index)));
+  guideList.appendChild(rows);
 
   const slideFragment = document.createDocumentFragment();
-  guides.forEach((item) => slideFragment.appendChild(slideTemplate(item)));
+  detailSlides.forEach((item) => slideFragment.appendChild(slideTemplate(item)));
   slides.appendChild(slideFragment);
 
-  guides.forEach((_, index) => {
+  detailSlides.forEach((_, index) => {
     const dot = document.createElement("button");
     dot.type = "button";
     dot.className = "dot";
-    dot.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+    dot.setAttribute("aria-label", `Go to page ${index + 1}`);
     dot.addEventListener("click", () => setActive(index));
     dots.appendChild(dot);
   });
 
-  setActive(0);
+  setActive(0, false);
 }
 
-function openDetail(index) {
-  setActive(index, false);
+function setOpenOrigin(sourceEl) {
+  if (!sourceEl) {
+    detailScreen.style.setProperty("--enter-x", "0px");
+    detailScreen.style.setProperty("--enter-y", "0px");
+    return;
+  }
+
+  const appRect = app.getBoundingClientRect();
+  const sourceRect = sourceEl.getBoundingClientRect();
+  const sourceX = sourceRect.left + sourceRect.width / 2 - appRect.left;
+  const sourceY = sourceRect.top + sourceRect.height / 2 - appRect.top;
+  const targetX = appRect.width / 2;
+  const targetY = 320;
+
+  detailScreen.style.setProperty("--enter-x", `${sourceX - targetX}px`);
+  detailScreen.style.setProperty("--enter-y", `${sourceY - targetY}px`);
+}
+
+function openDetail(index, sourceEl) {
+  setOpenOrigin(sourceEl);
+  setActive(index % detailSlides.length, false);
   listScreen.classList.add("is-leaving");
   listScreen.classList.remove("is-active");
-  detailScreen.classList.add("is-active");
+  detailScreen.classList.add("is-active", "is-opening");
   detailScreen.removeAttribute("aria-hidden");
+  window.setTimeout(() => detailScreen.classList.remove("is-opening"), 720);
 }
 
 function closeDetail() {
-  detailScreen.classList.remove("is-active");
-  detailScreen.setAttribute("aria-hidden", "true");
-  listScreen.classList.add("is-active");
-  listScreen.classList.remove("is-leaving");
-  if (location.hash.startsWith("#detail")) {
-    history.replaceState(null, "", location.pathname + location.search);
-  }
+  detailScreen.classList.add("is-closing");
+  window.setTimeout(() => {
+    detailScreen.classList.remove("is-active", "is-closing");
+    detailScreen.setAttribute("aria-hidden", "true");
+    listScreen.classList.add("is-active");
+    listScreen.classList.remove("is-leaving");
+    if (location.hash.startsWith("#detail")) {
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+  }, 300);
 }
 
 function setActive(index, animate = true) {
-  activeIndex = Math.max(0, Math.min(guides.length - 1, index));
-  slides.style.transitionDuration = animate ? "450ms" : "0ms";
+  activeIndex = Math.max(0, Math.min(detailSlides.length - 1, index));
+  slides.style.transitionDuration = animate ? "520ms" : "0ms";
   slides.style.transform = `translate3d(${-activeIndex * 100}%, 0, 0)`;
   [...dots.children].forEach((dot, dotIndex) => {
     dot.classList.toggle("is-active", dotIndex === activeIndex);
@@ -159,9 +182,10 @@ function pointerMove(event) {
   if (!dragging) return;
   currentX = event.clientX ?? event.touches?.[0]?.clientX ?? currentX;
   const delta = currentX - startX;
-  const width = carousel.clientWidth;
   const resistance =
-    (activeIndex === 0 && delta > 0) || (activeIndex === guides.length - 1 && delta < 0) ? 0.25 : 1;
+    (activeIndex === 0 && delta > 0) || (activeIndex === detailSlides.length - 1 && delta < 0)
+      ? 0.28
+      : 1;
   slides.style.transform = `translate3d(calc(${-activeIndex * 100}% + ${delta * resistance}px), 0, 0)`;
 }
 
@@ -169,7 +193,7 @@ function pointerUp() {
   if (!dragging) return;
   dragging = false;
   const delta = currentX - startX;
-  const threshold = Math.min(82, carousel.clientWidth * 0.22);
+  const threshold = Math.min(76, carousel.clientWidth * 0.2);
 
   if (delta < -threshold) {
     setActive(activeIndex + 1);
