@@ -535,7 +535,7 @@ button {
 .slide {
   position: relative;
   display: grid;
-  grid-template-rows: 520px minmax(0, 1fr);
+  grid-template-rows: 550px minmax(0, 1fr);
   flex: 0 0 100%;
   min-width: 100%;
   isolation: isolate;
@@ -553,7 +553,7 @@ button {
   z-index: 1;
   top: 126px;
   left: 50%;
-  width: 180px;
+  width: 204px;
   margin: 0;
   border: 0;
   background: transparent;
@@ -572,7 +572,7 @@ button {
 .slide-copy {
   position: relative;
   z-index: 1;
-  padding: 0px 16px 0;
+  padding: 8px 16px 0;
   transition: opacity 260ms var(--ease);
 }
 

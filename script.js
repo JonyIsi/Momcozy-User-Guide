@@ -43,7 +43,6 @@ const guides = [
   },
 ];
 
-const detailSlides = guides;
 const faqs = [
   {
     title: "This is a chapter title",
@@ -85,6 +84,7 @@ const guideList = document.querySelector("#guideList");
 const faqList = document.querySelector("#faqList");
 const slides = document.querySelector("#slides");
 const dots = document.querySelector("#progressDots");
+const detailFooter = document.querySelector(".detail-footer");
 const carousel = document.querySelector("#carousel");
 const backButton = document.querySelector("#backButton");
 const detailNavTitle = document.querySelector(".detail-nav h2");
@@ -100,6 +100,7 @@ let dragging = false;
 let transitionLocked = false;
 let lastOpenedThumb = null;
 let lockedBackgroundCover = guides[0].cover;
+let currentDetailSlides = [];
 
 function waitForFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -156,6 +157,40 @@ function setTransitionLocked(locked) {
 function setDetailBackground(cover) {
   lockedBackgroundCover = cover || lockedBackgroundCover;
   detailBackground.src = lockedBackgroundCover;
+}
+
+function getUpdateCount(item) {
+  const match = item?.updates?.match(/\d+/);
+  return Math.max(1, Number(match?.[0]) || 1);
+}
+
+function getDetailSlidesForGuide(index) {
+  const guideIndex = Math.max(0, Math.min(guides.length - 1, index));
+  const count = getUpdateCount(guides[guideIndex]);
+  return Array.from({ length: count }, (_, offset) => guides[(guideIndex + offset) % guides.length]);
+}
+
+function renderDetailPages(index) {
+  currentDetailSlides = getDetailSlidesForGuide(index);
+  slides.replaceChildren(...currentDetailSlides.map((item) => slideTemplate(item)));
+
+  const shouldShowPagination = currentDetailSlides.length > 1;
+  detailFooter.hidden = !shouldShowPagination;
+  if (!shouldShowPagination) {
+    dots.replaceChildren();
+    return;
+  }
+
+  dots.replaceChildren(
+    ...currentDetailSlides.map((_, dotIndex) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "dot";
+      dot.setAttribute("aria-label", `Go to page ${dotIndex + 1}`);
+      dot.addEventListener("click", () => setActive(dotIndex));
+      return dot;
+    }),
+  );
 }
 
 function makeSharedElement({ className, rect, radius, src }) {
@@ -384,31 +419,17 @@ function render() {
   const faqRows = document.createDocumentFragment();
   faqs.forEach((item, index) => faqRows.appendChild(faqTemplate(item, index)));
   faqList.appendChild(faqRows);
-
-  const slideFragment = document.createDocumentFragment();
-  detailSlides.forEach((item) => slideFragment.appendChild(slideTemplate(item)));
-  slides.appendChild(slideFragment);
-
-  detailSlides.forEach((_, index) => {
-    const dot = document.createElement("button");
-    dot.type = "button";
-    dot.className = "dot";
-    dot.setAttribute("aria-label", `Go to page ${index + 1}`);
-    dot.addEventListener("click", () => setActive(index));
-    dots.appendChild(dot);
-  });
-
-  setActive(0, false);
 }
 
 async function openDetail(index, sourceEl) {
   if (transitionLocked) return;
 
-  const slideIndex = index % detailSlides.length;
-  setActive(slideIndex, false);
-  detailNavTitle.textContent = guides[index]?.title || detailSlides[slideIndex]?.title || "New Update";
-  lastOpenedThumb = sourceEl || getThumbForSlide(slideIndex);
-  setDetailBackground(detailSlides[slideIndex]?.cover);
+  const guideIndex = Math.max(0, Math.min(guides.length - 1, index));
+  renderDetailPages(guideIndex);
+  setActive(0, false);
+  detailNavTitle.textContent = guides[guideIndex]?.title || "New Update";
+  lastOpenedThumb = sourceEl || getThumbForSlide(guideIndex);
+  setDetailBackground(guides[guideIndex]?.cover);
   setTransitionLocked(Boolean(sourceEl));
 
   detailScreen.classList.add("is-active", "is-content-hidden");
@@ -464,7 +485,7 @@ async function closeDetail() {
 }
 
 function setActive(index, animate = true) {
-  activeIndex = Math.max(0, Math.min(detailSlides.length - 1, index));
+  activeIndex = Math.max(0, Math.min(currentDetailSlides.length - 1, index));
   slides.style.transitionDuration = animate ? "520ms" : "0ms";
   slides.style.transform = `translate3d(${-activeIndex * 100}%, 0, 0)`;
   [...dots.children].forEach((dot, dotIndex) => {
@@ -486,7 +507,7 @@ function pointerMove(event) {
   currentX = event.clientX ?? event.touches?.[0]?.clientX ?? currentX;
   const delta = currentX - startX;
   const resistance =
-    (activeIndex === 0 && delta > 0) || (activeIndex === detailSlides.length - 1 && delta < 0)
+    (activeIndex === 0 && delta > 0) || (activeIndex === currentDetailSlides.length - 1 && delta < 0)
       ? 0.28
       : 1;
   slides.style.transform = `translate3d(calc(${-activeIndex * 100}% + ${delta * resistance}px), 0, 0)`;
