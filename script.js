@@ -119,6 +119,18 @@ function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
+function waitForImageReady(image) {
+  if (!image) return Promise.resolve();
+  if (image.complete && image.naturalWidth > 0) {
+    return image.decode?.().catch(() => undefined) || Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    image.addEventListener("load", resolve, { once: true });
+    image.addEventListener("error", resolve, { once: true });
+  }).then(() => image.decode?.().catch(() => undefined));
+}
+
 function updateListTopbarBackground() {
   const progress = (listScreen.scrollTop - LIST_TOPBAR_FADE_START) / (LIST_TOPBAR_FADE_END - LIST_TOPBAR_FADE_START);
   const opacity = Math.max(0, Math.min(1, progress));
@@ -329,6 +341,7 @@ async function runSharedTransition(sourceThumb, direction) {
 
   cardClone.append(coverClone, maskClone, phoneClone);
   layer.append(cardClone);
+  await Promise.all([waitForImageReady(coverClone), waitForImageReady(phoneClone)]);
   sourceThumb.classList.add("is-shared-source");
   detailScreen.classList.add("is-shared-transition");
   await waitForFrame();
