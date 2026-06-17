@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>用户使用指南（H5）</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-label="iOS 26 新功能用户使用指南">
+      <section class="screen screen-list is-active" id="listScreen">
+        <div class="statusbar" aria-hidden="true">
+          <span>10:29</span>
+          <span class="island"><i></i></span>
+          <span class="system-icons">▮▮▮⌁ <b>54</b></span>
+        </div>
+
+        <header class="list-hero">
+          <button class="nav-circle" type="button" aria-label="返回">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 18 9 12l6-6" />
+            </svg>
+          </button>
+          <div class="sparkle" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <h1>iOS 26 新功能</h1>
+          <p>探索全新设计，以全新方式保持联系、无缝沟通和表达自我。</p>
+        </header>
+
+        <div class="guide-list" id="guideList"></div>
+      </section>
+
+      <section class="screen screen-detail" id="detailScreen" aria-hidden="true">
+        <div class="statusbar statusbar-detail" aria-hidden="true">
+          <span>10:29</span>
+          <span class="island"><i></i></span>
+          <span class="system-icons">▮▮▮⌁ <b>54</b></span>
+        </div>
+
+        <header class="detail-nav">
+          <button class="nav-circle" type="button" id="backButton" aria-label="返回列表">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 18 9 12l6-6" />
+            </svg>
+          </button>
+          <h2>新功能</h2>
+          <div class="nav-actions" aria-label="页面操作">
+            <button type="button" aria-label="分享">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15V3m0 0L8 7m4-4 4 4" />
+                <path d="M5 11v8h14v-8" />
+              </svg>
+            </button>
+            <button type="button" aria-label="收藏">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 4h10v16l-5-3-5 3z" />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="carousel" id="carousel" tabindex="0" aria-label="新功能详情，左右滑动切换">
+          <div class="slides" id="slides"></div>
+        </div>
+
+        <footer class="detail-footer">
+          <div class="progress" id="progressDots" aria-label="当前页"></div>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
