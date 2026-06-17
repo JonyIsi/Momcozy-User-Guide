@@ -125,6 +125,10 @@ button {
 }
 
 .screen-detail {
+  --detail-stage-height: 550px;
+  --detail-phone-top: 126px;
+  --detail-phone-width: 402px;
+  --detail-copy-top: 8px;
   overflow: hidden;
   background: #ffffff;
 }
@@ -585,7 +589,7 @@ button {
 .slide {
   position: relative;
   display: grid;
-  grid-template-rows: 550px minmax(0, 1fr);
+  grid-template-rows: var(--detail-stage-height) minmax(0, 1fr);
   flex: 0 0 100%;
   min-width: 100%;
   isolation: isolate;
@@ -601,9 +605,9 @@ button {
 .phone-shot {
   position: absolute;
   z-index: 1;
-  top: 126px;
+  top: var(--detail-phone-top);
   left: 50%;
-  width: 402px;
+  width: var(--detail-phone-width);
   margin: 0;
   border: 0;
   background: transparent;
@@ -622,7 +626,7 @@ button {
 .slide-copy {
   position: relative;
   z-index: 1;
-  padding: 8px 16px 0;
+  padding: var(--detail-copy-top) 16px 86px;
   transition: opacity 260ms var(--ease);
 }
 
@@ -772,6 +776,15 @@ button {
 
   .app {
     margin: 0;
+  }
+}
+
+@media (max-width: 393px) {
+  .screen-detail {
+    --detail-stage-height: clamp(462px, calc(550px - ((402px - 100vw) * 2.1)), 532px);
+    --detail-phone-top: clamp(96px, calc(126px - ((402px - 100vw) * 0.65)), 120px);
+    --detail-phone-width: clamp(328px, 92vw, 362px);
+    --detail-copy-top: 0px;
   }
 }
 
