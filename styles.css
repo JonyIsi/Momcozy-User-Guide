@@ -578,8 +578,9 @@ button {
 .slide-copy h3 {
   margin: 0 0 16px;
   color: #240f1b;
+  font-family: "Exposure[-10]", Georgia, "Times New Roman", serif;
   font-size: 24px;
-  font-weight: 500;
+  /* font-weight: 500; */
   font-synthesis: none;
   line-height: 29px;
   letter-spacing: 0.48px;
