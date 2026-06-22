@@ -178,7 +178,12 @@ function waitForImageReady(image) {
 function updateListTopbarBackground() {
   const progress = (listScreen.scrollTop - LIST_TOPBAR_FADE_START) / (LIST_TOPBAR_FADE_END - LIST_TOPBAR_FADE_START);
   const opacity = Math.max(0, Math.min(1, progress));
+  const buttonRed = Math.round(255 + (248 - 255) * opacity);
+  const buttonGreen = Math.round(255 + (249 - 255) * opacity);
+  const buttonBlue = Math.round(255 + (250 - 255) * opacity);
+  const buttonOpacity = 0.4 + (1 - 0.4) * opacity;
   listTopbar.style.setProperty("--list-nav-bg-opacity", opacity.toFixed(3));
+  listTopbar.style.setProperty("--list-nav-button-bg", `rgba(${buttonRed}, ${buttonGreen}, ${buttonBlue}, ${buttonOpacity.toFixed(3)})`);
   listTopbar.style.setProperty("--list-nav-icon-invert", (1 - opacity).toFixed(3));
 }
 
